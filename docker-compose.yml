@@ -1,0 +1,110 @@
+version: "3"
+services:
+
+  nginx:
+    container_name: nginx_container
+    image: nginx
+    ports:
+      - 80:80
+    environment:
+      - TZ=Asia/Tokyo
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - pma
+    networks:
+      - frontend-web
+      - backend-web
+
+  react:
+    container_name: frontend_container
+    build:
+      context: .
+      dockerfile: ./docker/react/Dockerfile
+    tty: true
+    volumes:
+      - ./app-react-frontend:/app/react
+    command: sh -c "cd /app/react && yarn start"
+    ports:
+      - 3000:3000
+    networks:
+      - frontend-web
+
+  laravel:
+    container_name: backend_container
+    build:
+      context: .
+      dockerfile: ./docker/laravel/Dockerfile
+    tty: true
+    volumes:
+      - ./app-laravel-backend:/app/laravel
+    ports:
+      - 9000:9000
+    networks:
+      - backend-web
+
+  mysql:
+    container_name: mysqldb_container
+    build:
+      context: .
+      dockerfile: ./docker/mysql/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: webapp-db
+      MYSQL_USER: sql_mng_user
+      MYSQL_PASSWORD: mngpass1234
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./docker/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf.d:/etc/mysql/conf.d
+      - ./docker/mysql/mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    links:
+      - laravel
+    networks:
+      - backend-web
+
+  redis:
+    container_name: data_store
+    image: redis:latest
+    tty: true
+    ports:
+      - 6379:6379
+    networks:
+      - backend-web
+
+  pma:
+    container_name: phpmyadmin_container
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql
+      PMA_DATABASE: webapp-db
+      PMA_USER: sql_mng_user
+      PMA_PASSWORD: mngpass1234
+    links:
+      - mysql
+    ports:
+      - 1234:80
+    volumes:
+      - /sessions
+    networks:
+      - backend-web
+
+networks:
+  frontend-web:
+    name: frontend_nw
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+  backend-web:
+    name: backend_nw
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.20.0/24

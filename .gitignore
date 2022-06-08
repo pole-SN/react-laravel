@@ -1,0 +1,5 @@
+*.DS_Store
+*mysql/conf.d
+*mysql/initdb.d
+*mysql/mysql_data
+*.env*
