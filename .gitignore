@@ -1,5 +1,4 @@
 *.DS_Store
-*mysql/conf.d
-*mysql/initdb.d
-*mysql/mysql_data
-*.env*
+/docker/mysql/conf.d
+/docker/mysql/initdb.d
+/docker/mysql/mysql_data
