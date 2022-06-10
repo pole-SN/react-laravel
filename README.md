@@ -15,8 +15,23 @@ docker-compose up -d
 # ビルドと起動を一気にやる場合
 docker-compose up -d --build
 
+# Laravelのvendorフォルダ生成
+docker-compose exec laravel composer install
+
 # コンテナ停止
 docker-compose down
+```
+
+## アクセス
+```
+React - フロントページ
+http://localhost
+
+Laravel - バックページ
+http://localhost/api/
+
+Laravel - タスク一覧取得API
+http://localhost/api/tasks
 ```
 
 ## データベースマイグレーション
