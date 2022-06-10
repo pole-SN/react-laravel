@@ -18,8 +18,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['middleware' => 'api'])->group(function () {
-    Route::get('/', function (Request $request) {
-        return view('welcome');
-    });
+Route::get('/', function (Request $request) {
+    return view('welcome');
 });
+
+Route::apiResource('tasks', 'App\Http\Controllers\TaskController');
