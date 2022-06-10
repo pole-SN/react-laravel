@@ -1,4 +1,4 @@
-FROM php:8.1-rc-alpine
+FROM php:8.1-rc-fpm-alpine
 
 ENV TZ=Asia/Tokyo \
   LANG=ja_JP.UTF-8 \
@@ -12,13 +12,10 @@ COPY --from=composer:2.3 /usr/bin/composer /usr/bin/composer
 COPY ./app-laravel-backend /app/laravel
 WORKDIR /app/laravel
 
-RUN apk upgrade --update && \
-    apk --no-cache add git
-
-RUN apk update && apk add vim
-
-COPY ./docker/laravel/php.development.ini /usr/local/etc/php/php.ini
-# COPY ./docker/php/php.deploy.ini /usr/local/etc/php/php.ini
+RUN apk upgrade
+RUN apk update
+RUN apk --no-cache add git
+RUN apk --no-cache add vim
 
 RUN composer install -q -n --no-ansi
 RUN composer install -q -n --no-dev

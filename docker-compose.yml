@@ -39,6 +39,8 @@ services:
     tty: true
     volumes:
       - ./app-laravel-backend:/app/laravel
+      - ./docker/laravel/php.development.ini:/usr/local/etc/php/php.ini
+      # - ./docker/laravel/php.deploy.ini:/usr/local/etc/php/php.ini
     ports:
       - 9000:9000
     networks:
