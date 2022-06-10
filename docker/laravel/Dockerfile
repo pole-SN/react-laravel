@@ -17,6 +17,8 @@ RUN apk update
 RUN apk --no-cache add git
 RUN apk --no-cache add vim
 
+RUN docker-php-ext-install pdo_mysql
+
 RUN composer install -q -n --no-ansi
 RUN composer install -q -n --no-dev
 RUN composer install -q -n --no-scripts
